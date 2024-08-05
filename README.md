@@ -1,77 +1,118 @@
-# Unread Books Service
+# Unread Books Microservice
 
 ## Overview
 
-The **Unread Books Service** is a microservice implemented using Flask that provides endpoints to view unread books from a JSON file. This service allows users to view a list of unread books and filter them by author.
+This microservice provides endpoints to retrieve information about unread books from a JSON file. It supports two main functionalities:
 
-## Features
+1. **View all unread books**
+2. **View unread books by a specific author**
 
-- **View All Unread Books**: Returns a list of books with a read status of 'N'.
-- **Filter Unread Books by Author**: Returns a list of unread books filtered by a specific author's name.
+## Communication Contract
 
-## Running the Microservice
+### Endpoints
 
-1. **Start the Flask Application:**
+1. **View All Unread Books**
+   - **URL:** `/view-unread-books`
+   - **Method:** `GET`
+   - **Response Format:** JSON array of books with read status 'N'
 
+2. **View Unread Books by Author**
+   - **URL:** `/view-unread-books-by-author`
+   - **Method:** `GET`
+   - **Query Parameters:**
+     - `author` (required): The name of the author to filter the unread books by.
+   - **Response Format:** JSON array of books with read status 'N' by the specified author
+
+### Example Requests
+
+1. **View All Unread Books**
+
+   **Request:**
    ```bash
-   python microservice.py
+      http://127.0.0.1:5000/view-unread-books
    ```
 
-   The service will be running on `http://127.0.0.1:5000`.
+   **Response:**
+   ```json
+   [
+     {
+       "title": "1984",
+       "author": "George Orwell",
+       "read": "N"
+     },
+     {
+       "title": "Moby-Dick",
+       "author": "Herman Melville",
+       "read": "N"
+     },
+     ...
+   ]
+   ```
 
-## API Endpoints
+2. **View Unread Books by Author**
 
-### View Unread Books
+   **Request:**
+   ```bash
+      http://127.0.0.1:5000/view-unread-books-by-author?author=George%20Orwell
+   ```
 
-- **Endpoint:** `/view-unread-books`
-- **Method:** `GET`
-- **Description:** Returns a list of books with the read status 'N'.
-- **Example Request:**
+   **Response:**
+   ```json
+   [
+     {
+       "title": "1984",
+       "author": "George Orwell",
+       "read": "N"
+     }
+   ]
+   ```
 
-  ```bash
-  curl http://127.0.0.1:5000/view-unread-books
-  ```
+## Instructions
 
-- **Example Response:**
+### How to Request Data
 
-  ```json
-  [
-    {"title": "Book Title", "author": "Author Name", "read": "N"},
-    {"title": "Book Title", "author": "Author Name", "read": "N"},
-    {"title": "Book Title", "author": "Author Name", "read": "N"}
-  ]
-  ```
+To request data from the microservice, you can use HTTP GET requests. Here’s how you can do it in Python using the `requests` library:
 
-### View Unread Books by Author
+```python
+import requests
 
-- **Endpoint:** `/view-unread-books-by-author`
-- **Method:** `GET`
-- **Query Parameter:** `author` (Required)
-- **Description:** Returns a list of unread books by a specific author.
-- **Request Structure:**
+# View all unread books
+response = requests.get("http://127.0.0.1:5000/view-unread-books")
+print(response.json())
 
-  ```bash
-  curl "http://127.0.0.1:5000/view-unread-books-by-author?author=Author Name"
-  ```
+# View unread books by author
+author = "George Orwell"
+response = requests.get(f"http://127.0.0.1:5000/view-unread-books-by-author?author={author}")
+print(response.json())
+```
 
-- **Example Request:**
+### How to Receive Data
 
-  ```bash
-  curl "http://127.0.0.1:5000/view-unread-books-by-author?author=George%20Orwell"
-  ```
+The response from the microservice will be in JSON format. To handle this in Python:
 
-- **Example Response:**
+```python
+import requests
 
-  ```json
-  [
-    {"title": "Book Title", "author": "Author Name", "read": "N"}
-  ]
-  ```
+# Example: View all unread books
+response = requests.get("http://127.0.0.1:5000/view-unread-books")
+if response.status_code == 200:
+    unread_books = response.json()
+    for book in unread_books:
+        print(f"Title: {book['title']}, Author: {book['author']}")
+else:
+    print("Failed to retrieve data.")
 
-## Error Handling
+# Example: View unread books by author
+author = "George Orwell"
+response = requests.get(f"http://127.0.0.1:5000/view-unread-books-by-author?author={author}")
+if response.status_code == 200:
+    unread_books_by_author = response.json()
+    for book in unread_books_by_author:
+        print(f"Title: {book['title']}, Author: {book['author']}")
+else:
+    print("Failed to retrieve data.")
+```
 
-- **Internal Server Error (500):** Returns an error message indicating an internal error.
+## UML Sequence Diagram
 
-  ```json
-  {"error": "An internal error occurred."}
-  ```
+![uml sequence diagram](UML-Sequence-Diagram-Microservice-A.png) 
