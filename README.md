@@ -36,6 +36,8 @@ The **Unread Books Service** is a microservice implemented using Flask that prov
 
   ```json
   [
+    {"title": "Book Title", "author": "Author Name", "read": "N"},
+    {"title": "Book Title", "author": "Author Name", "read": "N"},
     {"title": "Book Title", "author": "Author Name", "read": "N"}
   ]
   ```
@@ -46,11 +48,13 @@ The **Unread Books Service** is a microservice implemented using Flask that prov
 - **Method:** `GET`
 - **Query Parameter:** `author` (Required)
 - **Description:** Returns a list of unread books by a specific author.
-- **Example Request:**
+- **Request Structure:**
 
   ```bash
   curl "http://127.0.0.1:5000/view-unread-books-by-author?author=Author Name"
   ```
+
+- **Example Request:**
 
   ```bash
   curl "http://127.0.0.1:5000/view-unread-books-by-author?author=George%20Orwell"
